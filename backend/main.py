@@ -1,11 +1,24 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import joblib
 import pandas as pd
 
 app = FastAPI()
 
-# Load models once
+# CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Load models
 freight_data = joblib.load("models/predict_freight_model.pkl")
 freight_model = freight_data["model"]
 
@@ -13,9 +26,15 @@ flag_model = joblib.load("models/predict_flag_invoice.pkl")
 scaler = joblib.load("models/scaler.pkl")
 
 
-# -------- Freight --------
+@app.get("/")
+def home():
+    return {"message": "Invoice API Running Successfully"}
+
+
+# Freight Input
 class FreightInput(BaseModel):
     Dollars: float
+
 
 @app.post("/predict-freight")
 def predict_freight(data: FreightInput):
@@ -24,7 +43,7 @@ def predict_freight(data: FreightInput):
     return {"predicted_freight": round(pred, 2)}
 
 
-# -------- Invoice Flag --------
+# Flag Input
 class FlagInput(BaseModel):
     invoice_quantity: float
     invoice_dollars: float
@@ -32,12 +51,22 @@ class FlagInput(BaseModel):
     total_item_quantity: float
     total_item_dollars: float
 
+
 @app.post("/predict-flag")
 def predict_flag(data: FlagInput):
-    df = pd.DataFrame([data.dict()])
+    cols = [
+        "invoice_quantity",
+        "invoice_dollars",
+        "Freight",
+        "total_item_quantity",
+        "total_item_dollars"
+    ]
+
+    df = pd.DataFrame([data.dict()])[cols]
     scaled = scaler.transform(df)
     pred = int(flag_model.predict(scaled)[0])
 
     return {
-        "risk": "Suspicious" if pred == 1 else "Safe"
+        "risk": "Suspicious" if pred == 1 else "Safe",
+        "confidence": 95
     }

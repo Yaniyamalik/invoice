@@ -30,45 +30,37 @@ export default function PredictorPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [prediction, setPrediction] = useState<number | null>(null)
 
- const handleAnalyze = async () => {
-  if (!formData.quantity || !formData.dollars || !formData.freight) return;
+ const handlePredict = async () => {
+  if (!dollars) return;
 
   try {
     setIsLoading(true);
 
-    const response = await fetch("http://127.0.0.1:8000/predict-flag", {
+    const response = await fetch("http://localhost:8000/predict-freight", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        invoice_quantity: Number(formData.quantity),
-        invoice_dollars: Number(formData.dollars),
-        Freight: Number(formData.freight),
-        total_item_quantity: Number(formData.quantity),
-        total_item_dollars: Number(formData.totalItemDollars),
+        Dollars: Number(dollars),
       }),
     });
 
     if (!response.ok) {
-      throw new Error("API failed");
+      const text = await response.text();
+      throw new Error(text);
     }
 
     const data = await response.json();
-
-    setResult({
-      status: data.risk.toLowerCase() === "safe" ? "safe" : "suspicious",
-      confidence: data.confidence ?? 95,
-      riskFactors: data.riskFactors ?? ["Analysis completed"],
-    });
-
+    setPrediction(data.predicted_freight);
   } catch (error) {
     console.error(error);
-    alert("Could not analyze invoice");
+    alert("Could not predict freight");
   } finally {
     setIsLoading(false);
   }
 };
+
 
   return (
     <DashboardLayout

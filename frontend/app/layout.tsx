@@ -10,7 +10,6 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: 'Smart Invoice Intelligence | AI-Powered Invoice Management',
   description: 'Predict freight costs and detect suspicious invoices using machine learning. Transform your invoice management with AI-powered insights.',
-  generator: 'v0.app',
   keywords: ['invoice management', 'AI', 'machine learning', 'freight prediction', 'fraud detection'],
   authors: [{ name: 'Smart Invoice Team' }],
   icons: {

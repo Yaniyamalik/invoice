@@ -136,21 +136,31 @@ export default function BulkAnalysisPage() {
     }
   }
 
-  const handleProcess = async () => {
-    if (!file) return
-    setIsProcessing(true)
-    setProgress(0)
+ const handleProcess = async () => {
+  if (!file) return;
 
-    // Simulate processing with progress
-    for (let i = 0; i <= 100; i += 5) {
-      await new Promise((resolve) => setTimeout(resolve, 100))
-      setProgress(i)
-    }
+  try {
+    setIsProcessing(true);
 
-    setResults(mockResults)
-    setIsProcessing(false)
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const response = await fetch("http://localhost:8000/bulk-analyze", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) throw new Error("Upload failed");
+
+    const data = await response.json();
+    setResults(data.results);
+  } catch (error) {
+    console.error(error);
+    alert("Could not process file");
+  } finally {
+    setIsProcessing(false);
   }
-
+};
   const handleClear = () => {
     setFile(null)
     setResults(null)

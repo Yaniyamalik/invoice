@@ -341,7 +341,7 @@ export function LandingPage() {
               <span className="font-bold">Smart Invoice</span>
             </div>
             <p className="text-center text-sm text-muted-foreground">
-              Built with React, Tailwind CSS, Python, Machine Learning & Flask API
+              Built by Yaniya  with React, Tailwind CSS, Python, Machine Learning & Flask API
             </p>
             <div className="flex gap-6 text-sm text-muted-foreground">
               <Link href="/about" className="transition-colors hover:text-foreground">About</Link>

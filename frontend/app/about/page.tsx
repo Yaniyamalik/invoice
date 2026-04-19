@@ -245,7 +245,7 @@ export default function AboutPage() {
       {/* Footer */}
       <footer className="border-t border-border px-6 py-8 text-center">
         <p className="text-sm text-muted-foreground">
-          Built with React, Tailwind CSS, Python, Machine Learning & Flask API
+          Built By Yaniya with React, Tailwind CSS, Python, Machine Learning & Flask API
         </p>
         <p className="mt-2 text-xs text-muted-foreground">
           Smart Invoice Intelligence System
